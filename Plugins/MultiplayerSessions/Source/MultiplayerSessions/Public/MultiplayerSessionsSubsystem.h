@@ -8,7 +8,12 @@
 #include "MultiplayerSessionsSubsystem.generated.h"
 
 /**
- * 
+ * Custom delegates
+ */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnCreateSessionComplete, bool, bWasSuccessful);
+
+/**
+ * GameInstance subsystem for Multiplayer Sessions
  */
 UCLASS()
 class MULTIPLAYERSESSIONS_API UMultiplayerSessionsSubsystem : public UGameInstanceSubsystem
@@ -23,6 +28,11 @@ public:
 	void JoinSession(const FOnlineSessionSearchResult& SessionSearchResult);
 	void DestroySession();
 	void StartSession();
+
+	/**
+	 * Custom delegates
+	 */
+	FMultiplayerOnCreateSessionComplete MultiplayerOnCreateSessionComplete;
 
 protected:
 

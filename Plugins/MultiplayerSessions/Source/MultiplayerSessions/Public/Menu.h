@@ -24,6 +24,12 @@ protected:
 	virtual bool Initialize() override;
 	virtual void NativeDestruct() override;
 
+	/**
+	 * Callbacks for MultiplayerSessionsSubsystem
+	 */
+	UFUNCTION()
+	void OnCreateSession(bool bWasSuccessful);
+
 private:
 	TObjectPtr<UMultiplayerSessionsSubsystem> MultiplayerSessionsSubsystem;
 	int32 NumPublicConnections;

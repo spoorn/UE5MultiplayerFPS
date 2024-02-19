@@ -121,7 +121,7 @@ void AMenuSystemCharacter::OnCreateSessionComplete(FName SessionName, bool bWasS
 		// Join the lobby level
 		if (UWorld* World = GetWorld())
 		{
-			World->ServerTravel("/Game/Maps/Lobby?listen");	
+			World->ServerTravel(TEXT("/Game/Maps/Lobby?listen"));	
 		}
 	} else
 	{
@@ -166,7 +166,7 @@ void AMenuSystemCharacter::OnFindSessionsComplete(bool bWasSuccessful)
 		auto Id = Result.GetSessionIdStr();
 		auto User = Result.Session.OwningUserName;
 		FString MatchType;
-		Result.Session.SessionSettings.Get(FName("MatchType"), MatchType);
+		Result.Session.SessionSettings.Get(FName(TEXT("MatchType")), MatchType);
 		if (GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Cyan, FString::Printf(TEXT("Found session Id: %s, User: %s"), *Id, *User));

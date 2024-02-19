@@ -47,6 +47,8 @@ bool UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 	{
 		// Remove delegate from delegate list if failed to create session
 		SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegateHandle);
+		// Broadcast failure to delegates
+		MultiplayerOnCreateSessionComplete.Broadcast(false);
 		return false;
 	}
 	return true;
@@ -70,6 +72,11 @@ void UMultiplayerSessionsSubsystem::StartSession()
 
 void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
+	if (SessionInterface)
+	{
+		SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegateHandle);
+	}
+	MultiplayerOnCreateSessionComplete.Broadcast(bWasSuccessful);
 }
 
 void UMultiplayerSessionsSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
