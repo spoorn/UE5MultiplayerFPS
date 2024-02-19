@@ -12,7 +12,9 @@
 #include "InputActionValue.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
+#include "GameFramework/GameModeBase.h"
 #include "Online/OnlineSessionNames.h"
+#include "MultiplayerSessionsSubsystem.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -82,6 +84,15 @@ void AMenuSystemCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		MultiplayerSessionsSubsystem = GameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
+		if (MultiplayerSessionsSubsystem)
+		{
+			MultiplayerSessionsSubsystem->MultiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);
+		}
+	}
 }
 
 void AMenuSystemCharacter::CreateGameSession()
@@ -145,6 +156,14 @@ void AMenuSystemCharacter::JoinGameSession()
 	OnlineSessionInterface->FindSessions(*GetWorld()->GetFirstLocalPlayerFromController()->GetPreferredUniqueNetId(), SessionSearch.ToSharedRef());
 }
 
+void AMenuSystemCharacter::LeaveGameSession()
+{
+	if (MultiplayerSessionsSubsystem)
+	{
+		MultiplayerSessionsSubsystem->DestroySession();
+	}
+}
+
 void AMenuSystemCharacter::OnFindSessionsComplete(bool bWasSuccessful)
 {
 	if (!OnlineSessionInterface.IsValid()) return;
@@ -191,6 +210,24 @@ void AMenuSystemCharacter::OnJoinSessionComplete(FName SessionName, EOnJoinSessi
 		if (APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController())
 		{
 			PlayerController->ClientTravel(Address, TRAVEL_Absolute);
+		}
+	}
+}
+
+void AMenuSystemCharacter::OnDestroySession(FName SessionName, bool bWasSuccessful)
+{
+	if (!bWasSuccessful) return;
+	if (UWorld* World = GetWorld())
+	{
+		if (AGameModeBase* GameMode = World->GetAuthGameMode<AGameModeBase>())
+		{
+			GameMode->ReturnToMainMenuHost();
+		} else
+		{
+			if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+			{
+				PlayerController->ClientReturnToMainMenuWithTextReason(FText());
+			}
 		}
 	}
 }

@@ -89,11 +89,20 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void JoinGameSession();
 
+	/// Leave a game session
+	UFUNCTION(BlueprintCallable)
+	void LeaveGameSession();
+
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 	void OnFindSessionsComplete(bool bWasSuccessful);
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+	UFUNCTION()
+	void OnDestroySession(FName SessionName, bool bWasSuccessful);
 
 private:
+	UPROPERTY()
+	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
+	
 	FOnCreateSessionCompleteDelegate CreateSessionCompleteDelegate;
 	FOnFindSessionsCompleteDelegate FindSessionsCompleteDelegate;
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
