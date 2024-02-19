@@ -3,6 +3,7 @@
 
 #include "MultiplayerSessionsSubsystem.h"
 
+#include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 
 UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem() :
@@ -18,8 +19,37 @@ UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem() :
 	}
 }
 
-void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FString MatchType)
+bool UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FString MatchType)
 {
+	if (!SessionInterface.IsValid()) return false;
+	// Destroy any existing session
+	if (SessionInterface->GetNamedSession(NAME_GameSession))
+	{
+		SessionInterface->DestroySession(NAME_GameSession);
+	}
+
+	// Register delegate and save handle
+	CreateSessionCompleteDelegateHandle = SessionInterface->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);
+
+	// Settings
+	LastSessionSettings = MakeShared<FOnlineSessionSettings>();
+	// If no backend subsystem is available, default to LAN
+	LastSessionSettings->bIsLANMatch = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL";
+	LastSessionSettings->NumPublicConnections = NumPublicConnections;
+	LastSessionSettings->bAllowJoinInProgress = true;
+	LastSessionSettings->bAllowJoinViaPresence = true;
+	LastSessionSettings->bShouldAdvertise = true;
+	LastSessionSettings->bUsesPresence = true;
+	LastSessionSettings->bUseLobbiesIfAvailable = true;
+	// Set match type
+	LastSessionSettings->Set(MatchTypeName, MatchType, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+	if (!SessionInterface->CreateSession(*GetLocalPlayer()->GetPreferredUniqueNetId(), NAME_GameSession, *LastSessionSettings))
+	{
+		// Remove delegate from delegate list if failed to create session
+		SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegateHandle);
+		return false;
+	}
+	return true;
 }
 
 void UMultiplayerSessionsSubsystem::FindSessions(int32 MaxSearchResults)
@@ -56,4 +86,13 @@ void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, 
 
 void UMultiplayerSessionsSubsystem::OnStartSessionComplete(FName SessionName, bool bWasSuccessful)
 {
+}
+
+ULocalPlayer* UMultiplayerSessionsSubsystem::GetLocalPlayer() const
+{
+	if (UWorld* World = GetWorld())
+	{
+		return World->GetFirstLocalPlayerFromController();
+	}
+	return nullptr;
 }

@@ -18,7 +18,7 @@ class MULTIPLAYERSESSIONS_API UMultiplayerSessionsSubsystem : public UGameInstan
 public:
 	UMultiplayerSessionsSubsystem();
 
-	void CreateSession(int32 NumPublicConnections, FString MatchType);
+	bool CreateSession(int32 NumPublicConnections, FString MatchType);
 	void FindSessions(int32 MaxSearchResults);
 	void JoinSession(const FOnlineSessionSearchResult& SessionSearchResult);
 	void DestroySession();
@@ -36,7 +36,11 @@ protected:
 	void OnStartSessionComplete(FName SessionName, bool bWasSuccessful);
 
 private:
+	inline static const FName MatchTypeName = FName("MatchType");
+	
 	IOnlineSessionPtr SessionInterface;
+	// Online Session Settings for creating sessions
+	TSharedPtr<FOnlineSessionSettings> LastSessionSettings;
 
 	/**
 	 * Online Session Interface delegates.
@@ -53,4 +57,10 @@ private:
 	FDelegateHandle DestroySessionCompleteDelegateHandle;
 	FOnStartSessionCompleteDelegate OnStartSessionCompleteDelegate;
 	FDelegateHandle StartSessionCompleteDelegateHandle;
+
+	/**
+	 * Helpers
+	 */
+
+	ULocalPlayer* GetLocalPlayer() const;
 };
