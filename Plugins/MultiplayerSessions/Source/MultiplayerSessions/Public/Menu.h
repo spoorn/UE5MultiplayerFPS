@@ -33,9 +33,9 @@ protected:
 	void OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful);
 	void OnJoinSession(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 	UFUNCTION()
-	void OnDestroySession(bool bWasSuccessful);
+	void OnDestroySession(FName SessionName, bool bWasSuccessful);
 	UFUNCTION()
-	void OnStartSession(bool bWasSuccessful);
+	void OnStartSession(FName SessionName, bool bWasSuccessful);
 
 private:
 	TObjectPtr<UMultiplayerSessionsSubsystem> MultiplayerSessionsSubsystem;

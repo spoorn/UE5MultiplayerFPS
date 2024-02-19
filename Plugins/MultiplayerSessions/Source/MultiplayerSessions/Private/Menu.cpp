@@ -126,12 +126,26 @@ void UMenu::OnJoinSession(FName SessionName, EOnJoinSessionCompleteResult::Type 
 	}
 }
 
-void UMenu::OnDestroySession(bool bWasSuccessful)
+void UMenu::OnDestroySession(FName SessionName, bool bWasSuccessful)
 {
+	if (bWasSuccessful)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Green, FString::Printf(TEXT("Destroyed session: %s"), *SessionName.ToString()));
+	} else
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("Failed to destroy session: %s"), *SessionName.ToString()));
+	}
 }
 
-void UMenu::OnStartSession(bool bWasSuccessful)
+void UMenu::OnStartSession(FName SessionName, bool bWasSuccessful)
 {
+	if (bWasSuccessful)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Green, FString::Printf(TEXT("Started session: %s"), *SessionName.ToString()));
+	} else
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("Failed to start session: %s"), *SessionName.ToString()));
+	}
 }
 
 void UMenu::MenuTearDown()
