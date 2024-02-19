@@ -33,7 +33,7 @@ public:
 	void CreateSession(int32 NumPublicConnections, FString MatchType);
 	void FindSessions(int32 MaxSearchResults);
 	void JoinSession(const FOnlineSessionSearchResult& SessionSearchResult);
-	void DestroySession();
+	void DestroySession(FName SessionName = NAME_GameSession);
 	void StartSession();
 
 	/**
@@ -63,6 +63,12 @@ private:
 	TSharedPtr<FOnlineSessionSettings> LastSessionSettings;
 	/// Search query settings
 	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;
+	/// Whether to create a new session once DestroySession is called
+	bool bCreateSessionOnDestroy{false};
+	/// Save last num public connections to create session on destroy
+	int32 LastNumPublicConnections;
+	/// Save last MatchType to create session on destroy
+	FString LastMatchType;
 
 	/**
 	 * Online Session Interface delegates.
