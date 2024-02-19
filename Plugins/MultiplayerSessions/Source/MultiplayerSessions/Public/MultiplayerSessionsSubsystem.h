@@ -13,7 +13,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnCreateSessionComplete, bool, bWasSuccessful);
 // Cannot be dynamic as FOnlineSessionSearchResult is not a UClass and is not serializable for BP
 DECLARE_MULTICAST_DELEGATE_TwoParams(FMultiplayerOnFindSessionsComplete, const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful);
-DECLARE_MULTICAST_DELEGATE_OneParam(FMultiplayerOnJoinSessionComplete, EOnJoinSessionCompleteResult::Type Result);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FMultiplayerOnJoinSessionComplete, FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnDestroySessionComplete, bool, bWasSuccessful);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnStartSessionComplete, bool, bWasSuccessful);
 
@@ -26,9 +26,11 @@ class MULTIPLAYERSESSIONS_API UMultiplayerSessionsSubsystem : public UGameInstan
 	GENERATED_BODY()
 
 public:
+	inline static const FName MatchTypeName = FName("MatchType");
+	
 	UMultiplayerSessionsSubsystem();
 
-	bool CreateSession(int32 NumPublicConnections, FString MatchType);
+	void CreateSession(int32 NumPublicConnections, FString MatchType);
 	void FindSessions(int32 MaxSearchResults);
 	void JoinSession(const FOnlineSessionSearchResult& SessionSearchResult);
 	void DestroySession();
@@ -55,11 +57,12 @@ protected:
 	void OnStartSessionComplete(FName SessionName, bool bWasSuccessful);
 
 private:
-	inline static const FName MatchTypeName = FName("MatchType");
-	
+	/// Pointer to Session Interface
 	IOnlineSessionPtr SessionInterface;
-	// Online Session Settings for creating sessions
+	/// Online Session Settings for creating sessions
 	TSharedPtr<FOnlineSessionSettings> LastSessionSettings;
+	/// Search query settings
+	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;
 
 	/**
 	 * Online Session Interface delegates.
@@ -81,5 +84,6 @@ private:
 	 * Helpers
 	 */
 
-	ULocalPlayer* GetLocalPlayer() const;
+	FORCEINLINE ULocalPlayer* GetLocalPlayer() const;
+	FORCEINLINE static bool ShouldUseLAN();
 };
