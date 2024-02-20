@@ -93,6 +93,10 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 	}
 
 	if (!MultiplayerSessionsSubsystem) return;
+	if (SessionResults.Num() == 0)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Blue, FString(TEXT("Did not find any sessions")));
+	}
 	for (auto Result : SessionResults)
 	{
 		FString MatchTypeValue;
@@ -129,7 +133,7 @@ void UMenu::OnJoinSession(FName SessionName, EOnJoinSessionCompleteResult::Type 
 		}
 	} else
 	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString(TEXT("Failed to join session: %s"), *LexToString(Result)));
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("Failed to join session: %s"), LexToString(Result)));
 		JoinButton->SetIsEnabled(true);
 	}
 }

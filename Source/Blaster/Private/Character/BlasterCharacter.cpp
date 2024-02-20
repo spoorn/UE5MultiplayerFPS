@@ -32,7 +32,7 @@ ABlasterCharacter::ABlasterCharacter()
 	CameraComponent->bUsePawnControlRotation = false;
 
 	// Enable controller rotation on character to follow camera movement
-	bUseControllerRotationPitch = true;
+	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = true;
 
