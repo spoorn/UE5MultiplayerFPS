@@ -8,8 +8,10 @@
 #include "InputMappingContext.h"
 #include "Asset/AssetMacros.h"
 #include "Camera/CameraComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "HUD/OverheadWidget.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -41,6 +43,14 @@ ABlasterCharacter::ABlasterCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0, 400, 0);
 
+	// Overhead widget
+	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
+	OverheadWidget->SetupAttachment(GetRootComponent());
+	OverheadWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	OverheadWidget->SetDrawAtDesiredSize(true);
+	OverheadWidget->SetRelativeLocation(FVector(0, 0, 150));
+	LOAD_ASSET_CLASS_TO_CALLBACK(UUserWidget, "/Game/Blueprints/HUD/WBP_OverheadWidget", OverheadWidget->SetWidgetClass);
+
 	// Input
 	LOAD_ASSET_TO_VARIABLE(UInputMappingContext, "/Game/Input/IMC_Blaster", MappingContext);
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Jump", JumpAction);
@@ -57,6 +67,16 @@ void ABlasterCharacter::BeginPlay()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(MappingContext, 0);
+		}
+	}
+
+	// Widget class needs to be set in BP
+	if (OverheadWidget)
+	{
+		if (UOverheadWidget* OverheadWidgetObj = Cast<UOverheadWidget>(OverheadWidget->GetWidget()))
+		{
+			// By default, show the player name
+			OverheadWidgetObj->ShowPlayerName(this);
 		}
 	}
 }
