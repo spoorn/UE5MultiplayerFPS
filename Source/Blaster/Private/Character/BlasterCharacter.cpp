@@ -15,7 +15,7 @@
 
 ABlasterCharacter::ABlasterCharacter()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	// Default mesh
 	LOAD_ASSET_TO_CALLBACK(USkeletalMesh, "/Game/Assets/LearningKit_Games/Assets/Characters/Character/Mesh/SK_EpicCharacter", GetMesh()->SetSkeletalMeshAsset);
