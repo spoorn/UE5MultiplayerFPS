@@ -8,6 +8,7 @@
 #include "InputMappingContext.h"
 #include "Asset/AssetMacros.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 ABlasterCharacter::ABlasterCharacter()
@@ -33,12 +34,12 @@ ABlasterCharacter::ABlasterCharacter()
 
 	// Enable controller rotation on character to follow camera movement
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = true;
+	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = true;
 
 	// Orient character to movement rotation
-	// GetCharacterMovement()->bOrientRotationToMovement = true;
-	// GetCharacterMovement()->RotationRate = FRotator(0, 400, 0);
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0, 400, 0);
 
 	// Input
 	LOAD_ASSET_TO_VARIABLE(UInputMappingContext, "/Game/Input/IMC_Blaster", MappingContext);

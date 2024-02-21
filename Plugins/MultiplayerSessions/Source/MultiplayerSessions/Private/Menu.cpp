@@ -104,6 +104,7 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 		// Check that result match type matches our query
 		if (MatchTypeValue == MatchType)
 		{
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Yellow, FString::Printf(TEXT("Joining session: %s, owner: %s"), *Result.Session.GetSessionIdStr(), *Result.Session.OwningUserName));
 			// TODO: Joins the first matching session only for now
 			MultiplayerSessionsSubsystem->JoinSession(Result);
 			return;
