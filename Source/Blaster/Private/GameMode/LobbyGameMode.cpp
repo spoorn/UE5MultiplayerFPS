@@ -4,16 +4,17 @@
 #include "GameMode/LobbyGameMode.h"
 
 #include "GameFramework/GameStateBase.h"
-#include "GameFramework/PlayerState.h"
 
 void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-	if (const APlayerState* PlayerState = NewPlayer->GetPlayerState<APlayerState>(); PlayerState && GEngine)
+	const int32 NumberOfPlayers = GameState->PlayerArray.Num();
+	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Purple, FString::Printf(TEXT("%s joined"), *PlayerState->GetPlayerName()));
+		//GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Purple, FString::Printf(TEXT("%s joined"), *PlayerState->GetPlayerName()));
+		GEngine->AddOnScreenDebugMessage(3, 15, FColor::Purple, FString::Printf(TEXT("Players in lobby: %d"), NumberOfPlayers));
 	}
-	if (GameState->PlayerArray.Num() == 2 && !GetWorldTimerManager().IsTimerActive(StartGameTimer))
+	if (NumberOfPlayers == 2 && !GetWorldTimerManager().IsTimerActive(StartGameTimer))
 	{
 		// Start timer to send all players to game map
 		GetWorldTimerManager().SetTimer(StartGameTimer, this, &ThisClass::StartGame, 1, true);
@@ -23,6 +24,10 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 void ALobbyGameMode::Logout(AController* Exiting)
 {
 	Super::Logout(Exiting);
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(3, 15, FColor::Purple, FString::Printf(TEXT("Players in lobby: %d"), GameState->PlayerArray.Num()));
+	}
 }
 
 void ALobbyGameMode::StartGame()

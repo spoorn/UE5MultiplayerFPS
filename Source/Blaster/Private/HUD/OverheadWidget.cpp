@@ -59,7 +59,14 @@ void UOverheadWidget::TrySetPlayerName(APawn* InPawn)
 	if (const APlayerState* PlayerState = InPawn->GetPlayerState())
 	{
 		const FColor Color = GetOwningLocalPlayer()->GetPlayerController(GetWorld()) == InPawn->GetController() ? SeaGreen : SalmonRed;
-		SetDisplayText(PlayerState->GetPlayerName(), Color);
+		// TODO: show all player names, doing this for security initially
+		if (GetOwningLocalPlayer()->GetPlayerController(GetWorld()) == InPawn->GetController())
+		{
+			SetDisplayText(PlayerState->GetPlayerName(), Color);
+		} else
+		{
+			SetDisplayText(FString("Enemy"), Color);
+		}
 		PollPlayerStateCount = 0;
 		GetWorld()->GetTimerManager().ClearTimer(ShowPlayerNameHandle);
 	}

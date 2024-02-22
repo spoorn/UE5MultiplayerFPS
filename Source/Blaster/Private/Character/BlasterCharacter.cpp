@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "Asset/AssetMacros.h"
+#include "BlasterComponents/CombatComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -53,11 +54,16 @@ ABlasterCharacter::ABlasterCharacter()
 	OverheadWidget->SetRelativeLocation(FVector(0, 0, 150));
 	LOAD_ASSET_CLASS_TO_CALLBACK(UUserWidget, "/Game/Blueprints/HUD/WBP_OverheadWidget", OverheadWidget->SetWidgetClass);
 
+	// Combat
+	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+	CombatComponent->SetIsReplicated(true);
+
 	// Input
 	LOAD_ASSET_TO_VARIABLE(UInputMappingContext, "/Game/Input/IMC_Blaster", MappingContext);
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Jump", JumpAction);
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Move", MoveAction);
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Turn", TurnAction);
+	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Equip", EquipAction);
 }
 
 void ABlasterCharacter::Tick(float DeltaTime)
@@ -74,6 +80,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
 		EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ThisClass::Turn);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ThisClass::Jump);
+		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &ThisClass::EquipButtonPressed);
 	}
 }
 
@@ -147,6 +154,10 @@ void ABlasterCharacter::Turn(const FInputActionValue& Value)
 		AddControllerYawInput(DirectionValue.X);
 		AddControllerPitchInput(DirectionValue.Y);
 	}
+}
+
+void ABlasterCharacter::EquipButtonPressed()
+{
 }
 
 void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)

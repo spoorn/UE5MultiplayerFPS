@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "BlasterCharacter.generated.h"
 
+class UCombatComponent;
 class AWeapon;
 class UWidgetComponent;
 struct FInputActionValue;
@@ -45,9 +46,12 @@ protected:
 	TObjectPtr<UInputAction> TurnAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> JumpAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> EquipAction;
 
 	void Move(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
+	void EquipButtonPressed();
 
 private:
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
@@ -66,4 +70,7 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = HUD, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWidgetComponent> OverheadWidget;
+
+	UPROPERTY(VisibleAnywhere, Category = Combat)
+	TObjectPtr<UCombatComponent> CombatComponent;
 };
