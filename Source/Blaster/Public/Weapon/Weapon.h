@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Weapon.generated.h"
 
+class UWidgetComponent;
 enum class EWeaponState : uint8;
 class USphereComponent;
 
@@ -22,8 +23,30 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void ShowPickupWidget(bool bShowWidget);
+
 protected:
 	virtual void BeginPlay() override;
+
+	/// Callback when area sphere overlaps with an actor
+	UFUNCTION()
+	virtual void OnSphereBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult & SweepResult
+	);
+
+	/// Callback when area sphere ends overlaps with an actor
+	UFUNCTION()
+	virtual void OnSphereEndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex
+	);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = State)
@@ -35,5 +58,9 @@ private:
 	/// Area sphere for overlapping events
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	TObjectPtr<USphereComponent> AreaSphere;
+
+	/// Overhead pickup widget
+	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
+	TObjectPtr<UWidgetComponent> PickupWidget;
 
 };
