@@ -24,9 +24,10 @@ public:
 	ABlasterCharacter();
 
 	virtual void Tick(float DeltaTime) override;
-
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	/// Immediately perform logic after components are initialized
+	virtual void PostInitializeComponents() override;
 
 	// Should only be called on server
 	void SetOverlappingWeapon(AWeapon* Weapon);

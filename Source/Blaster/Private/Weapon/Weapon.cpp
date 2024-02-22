@@ -7,6 +7,7 @@
 #include "Character/BlasterCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Weapon/WeaponTypes.h"
 
 AWeapon::AWeapon()
 {
@@ -66,18 +67,24 @@ void AWeapon::ShowPickupWidget(bool bShowWidget)
 void AWeapon::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(OtherActor))
+	if (WeaponState == EWeaponState::Initial)
 	{
-		BlasterCharacter->SetOverlappingWeapon(this);
+		if (ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(OtherActor))
+		{
+			BlasterCharacter->SetOverlappingWeapon(this);
+		}
 	}
 }
 
 void AWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(OtherActor))
+	if (WeaponState == EWeaponState::Initial)
 	{
-		BlasterCharacter->SetOverlappingWeapon(nullptr);
+		if (ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(OtherActor))
+		{
+			BlasterCharacter->SetOverlappingWeapon(nullptr);
+		}
 	}
 }
 
