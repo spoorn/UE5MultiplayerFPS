@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BlasterComponents/CombatComponent.h"
 #include "GameFramework/Character.h"
 #include "BlasterCharacter.generated.h"
 
@@ -32,6 +33,8 @@ public:
 	// Should only be called on server
 	void SetOverlappingWeapon(AWeapon* Weapon);
 
+	FORCEINLINE bool IsWeaponEquipped() { return CombatComponent && CombatComponent->EquippedWeapon; }
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -49,10 +52,13 @@ protected:
 	TObjectPtr<UInputAction> JumpAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> EquipAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> CrouchAction;
 
 	void Move(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
 	void EquipButtonPressed();
+	void CrouchButtonPressed();
 
 private:
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
