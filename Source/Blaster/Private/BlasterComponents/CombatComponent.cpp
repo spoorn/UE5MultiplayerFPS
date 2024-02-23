@@ -33,6 +33,7 @@ void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UCombatComponent, EquippedWeapon);
+	DOREPLIFETIME(UCombatComponent, bAiming);
 }
 
 void UCombatComponent::EquipWeapon(AWeapon* Weapon)
@@ -46,5 +47,17 @@ void UCombatComponent::EquipWeapon(AWeapon* Weapon)
 	}
 	// Note: owner is replicated already
 	EquippedWeapon->SetOwner(Character);
+}
+
+void UCombatComponent::SetAiming(bool bIsAiming)
+{
+	bAiming = bIsAiming;  // Set on client immediately
+	// Don't need to check authority as RPC is ran on server only, which is fine as any changes we make are replicated
+	ServerSetAiming(bIsAiming);
+}
+
+void UCombatComponent::ServerSetAiming_Implementation(bool bIsAiming)
+{
+	bAiming = bIsAiming;
 }
 

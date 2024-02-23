@@ -67,6 +67,7 @@ ABlasterCharacter::ABlasterCharacter()
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Turn", TurnAction);
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Equip", EquipAction);
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Crouch", CrouchAction);
+	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Aim", AimAction);
 }
 
 void ABlasterCharacter::Tick(float DeltaTime)
@@ -85,6 +86,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ThisClass::Jump);
 		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &ThisClass::EquipButtonPressed);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &ThisClass::CrouchButtonPressed);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ThisClass::AimButtonPressed);
 	}
 }
 
@@ -192,6 +194,15 @@ void ABlasterCharacter::CrouchButtonPressed()
 	{
 		// Crouch is already replicated
 		Crouch();
+	}
+}
+
+void ABlasterCharacter::AimButtonPressed(const FInputActionValue& Value)
+{
+	if (CombatComponent)
+	{
+		// Pressed = false, Released = true
+		CombatComponent->SetAiming(Value.Get<bool>());
 	}
 }
 

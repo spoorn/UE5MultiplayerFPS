@@ -23,6 +23,10 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	void EquipWeapon(AWeapon* Weapon);
+	void SetAiming(bool bIsAiming);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetAiming(bool bIsAiming);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -33,5 +37,9 @@ private:
 	/// Equipped weapon on actor
 	UPROPERTY(Replicated)
 	TObjectPtr<AWeapon> EquippedWeapon;
+
+	/// Is aiming down sights
+	UPROPERTY(Replicated)
+	bool bAiming;
 	
 };

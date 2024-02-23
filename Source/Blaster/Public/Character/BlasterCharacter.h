@@ -34,6 +34,7 @@ public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 
 	FORCEINLINE bool IsWeaponEquipped() { return CombatComponent && CombatComponent->EquippedWeapon; }
+	FORCEINLINE bool IsAiming() { return CombatComponent && CombatComponent->bAiming; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -54,11 +55,14 @@ protected:
 	TObjectPtr<UInputAction> EquipAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> CrouchAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> AimAction;
 
 	void Move(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
 	void EquipButtonPressed();
 	void CrouchButtonPressed();
+	void AimButtonPressed(const FInputActionValue& Value);
 
 private:
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
