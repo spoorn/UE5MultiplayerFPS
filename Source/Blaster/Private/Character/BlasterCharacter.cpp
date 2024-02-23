@@ -180,6 +180,8 @@ void ABlasterCharacter::EquipButtonPressed()
 			CombatComponent->EquipWeapon(OverlappingWeapon);
 		} else
 		{
+			// By calling the server fn here instead of in CombatComponent, we don't need to send
+			// Weapon class over RPC for better network efficiency, but it does make the code a little messier
 			ServerEquipButtonPressed();
 		}
 	}

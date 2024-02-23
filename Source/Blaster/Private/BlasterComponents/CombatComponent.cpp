@@ -6,6 +6,7 @@
 #include "Character/BlasterCharacter.h"
 #include "Character/CharacterTypes.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Weapon/Weapon.h"
 #include "Weapon/WeaponTypes.h"
@@ -20,6 +21,17 @@ void UCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void UCombatComponent::OnRep_EquippedWeapon()
+{
+	// TODO: Check if this is called multiple times when underlying property of AWeapon that is NOT replicated is changed
+	UE_LOG(LogTemp, Warning, TEXT("OnRep_EquippedWeapon"));
+	if (Character && EquippedWeapon)
+	{
+		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+		Character->bUseControllerRotationYaw = true;
+	}
 }
 
 
@@ -47,6 +59,8 @@ void UCombatComponent::EquipWeapon(AWeapon* Weapon)
 	}
 	// Note: owner is replicated already
 	EquippedWeapon->SetOwner(Character);
+	Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+    Character->bUseControllerRotationYaw = true;
 }
 
 void UCombatComponent::SetAiming(bool bIsAiming)

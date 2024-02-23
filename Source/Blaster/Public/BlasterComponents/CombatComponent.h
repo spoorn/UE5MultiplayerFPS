@@ -22,11 +22,11 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
+	/// [Server] Equips weapon locally, caller has to handle splitting between client/server
 	void EquipWeapon(AWeapon* Weapon);
-	void SetAiming(bool bIsAiming);
 
-	UFUNCTION(Server, Reliable)
-	void ServerSetAiming(bool bIsAiming);
+	/// Set character to aiming stance
+	void SetAiming(bool bIsAiming);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -35,11 +35,14 @@ private:
 	/// Back reference to owning character
 	TObjectPtr<ABlasterCharacter> Character;
 	/// Equipped weapon on actor
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_EquippedWeapon)
 	TObjectPtr<AWeapon> EquippedWeapon;
+	UFUNCTION()
+	void OnRep_EquippedWeapon();
 
 	/// Is aiming down sights
 	UPROPERTY(Replicated)
 	bool bAiming;
-	
+	UFUNCTION(Server, Reliable)
+	void ServerSetAiming(bool bIsAiming);
 };
