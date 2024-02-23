@@ -18,7 +18,6 @@ UCombatComponent::UCombatComponent()
 void UCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
 }
 
@@ -38,7 +37,7 @@ void UCombatComponent::EquipWeapon(AWeapon* Weapon)
 	{
 		HandSocket->AttachActor(EquippedWeapon, Character->GetMesh());
 	}
+	// Note: owner is replicated already
 	EquippedWeapon->SetOwner(Character);
-	EquippedWeapon->ShowPickupWidget(false);
 }
 

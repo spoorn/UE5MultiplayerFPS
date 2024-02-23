@@ -59,6 +59,13 @@ private:
 	TObjectPtr<AWeapon> OverlappingWeapon;
 	UFUNCTION()
 	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
+
+	/**
+	 * RPCs
+	 */
+
+	UFUNCTION(Server, Reliable)
+	void ServerEquipButtonPressed();
 	
 	/**
 	 * Components
