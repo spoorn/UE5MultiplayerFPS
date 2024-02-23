@@ -19,7 +19,7 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	if (!BlasterCharacter)
 	{
-		BlasterCharacter = Cast<ABlasterCharacter>(TryGetPawnOwner());;
+		BlasterCharacter = Cast<ABlasterCharacter>(TryGetPawnOwner());
 	}
 	if (!BlasterCharacter) return;
 	

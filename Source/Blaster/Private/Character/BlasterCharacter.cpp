@@ -47,6 +47,8 @@ ABlasterCharacter::ABlasterCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0, 400, 0);
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	GetCharacterMovement()->SetCrouchedHalfHeight(60);
+	GetCharacterMovement()->JumpZVelocity = 1600;
+	GetCharacterMovement()->GravityScale = 4;
 	
 	// Overhead widget
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
