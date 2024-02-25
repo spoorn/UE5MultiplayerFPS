@@ -32,6 +32,13 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	/// Character base walk speed, overridden by this combat component
+	UPROPERTY(EditAnywhere, Category = Movement)
+	float BaseWalkSpeed{600};
+	/// Walk speed while aiming
+	UPROPERTY(EditAnywhere, Category = Movement)
+	float AimWalkSpeed{400};
+	
 	/// Back reference to owning character
 	TObjectPtr<ABlasterCharacter> Character;
 	/// Equipped weapon on actor
