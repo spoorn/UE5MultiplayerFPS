@@ -35,10 +35,10 @@ public:
 
 	FORCEINLINE bool IsWeaponEquipped() { return CombatComponent && CombatComponent->EquippedWeapon; }
 	FORCEINLINE bool IsAiming() { return CombatComponent && CombatComponent->bAiming; }
+	FORCEINLINE float GetAOYaw() { return AO_Yaw; }
+	FORCEINLINE float GetAOPitch() { return AO_Pitch; }
 
 protected:
-	virtual void BeginPlay() override;
-
 	/**
 	 * Input
 	 */
@@ -58,25 +58,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> AimAction;
 
+	virtual void BeginPlay() override;
+	
 	void Move(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
 	void EquipButtonPressed();
 	void CrouchButtonPressed();
 	void AimButtonPressed(const FInputActionValue& Value);
 
+	/// Calculate aim offset parameters
+	void AimOffset(float DeltaTime);
+
 private:
-	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
-	TObjectPtr<AWeapon> OverlappingWeapon;
-	UFUNCTION()
-	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
-
-	/**
-	 * RPCs
-	 */
-
-	UFUNCTION(Server, Reliable)
-	void ServerEquipButtonPressed();
-	
 	/**
 	 * Components
 	 */
@@ -91,4 +84,28 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Combat)
 	TObjectPtr<UCombatComponent> CombatComponent;
+
+	/**
+	 * Combat
+	 */
+	
+	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
+	TObjectPtr<AWeapon> OverlappingWeapon;
+	UFUNCTION()
+	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
+
+	/**
+	 * RPCs
+	 */
+
+	UFUNCTION(Server, Reliable)
+	void ServerEquipButtonPressed();
+
+	/**
+	 * Aim offset
+	 */
+	
+	float AO_Yaw;
+	float AO_Pitch;
+	FRotator StartingAimRotation;
 };

@@ -14,12 +14,13 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "HUD/OverheadWidget.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "Weapon/Weapon.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	// Default mesh
 	LOAD_ASSET_TO_CALLBACK(USkeletalMesh, "/Game/Assets/LearningKit_Games/Assets/Characters/Character/Mesh/SK_EpicCharacter", GetMesh()->SetSkeletalMeshAsset);
@@ -81,6 +82,7 @@ ABlasterCharacter::ABlasterCharacter()
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	AimOffset(DeltaTime);
 }
 
 void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -212,7 +214,46 @@ void ABlasterCharacter::AimButtonPressed(const FInputActionValue& Value)
 	if (CombatComponent)
 	{
 		// Pressed = false, Released = true
-		CombatComponent->SetAiming(Value.Get<bool>());
+		bool bPressed = Value.Get<bool>();
+		CombatComponent->SetAiming(bPressed);
+		if (bPressed)
+		{
+			StartingAimRotation = FRotator(0, GetBaseAimRotation().Yaw, 0);
+		}
+	}
+}
+
+void ABlasterCharacter::AimOffset(float DeltaTime)
+{
+	if (!CombatComponent || !CombatComponent->EquippedWeapon) return;
+	float Speed = GetVelocity().Size2D();
+	bool bIsInAir = GetCharacterMovement()->IsFalling();
+
+	// Only set aim offset for Yaw when standing idle
+	if (Speed == 0 && !bIsInAir)
+	{
+		// Standing idle
+		//AO_Yaw = FMath::GetMappedRangeValueClamped(FVector2d{0, 360}, FVector2d{10, 20}, GetBaseAimRotation().Yaw);
+		
+		FRotator CurrentAimRotation = FRotator(0, GetBaseAimRotation().Yaw, 0);
+		FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
+		AO_Yaw = DeltaAimRotation.Yaw;
+		bUseControllerRotationYaw = false;
+	}
+	if (Speed > 0 || bIsInAir)
+	{
+		// Running or jumping, reset movement to follow controller
+		StartingAimRotation = FRotator(0, GetBaseAimRotation().Yaw, 0);
+		AO_Yaw = 0;
+		bUseControllerRotationYaw = true;
+	}
+
+	// Aim offset pitch can change even when jumping
+	AO_Pitch = GetBaseAimRotation().Pitch;
+	if (AO_Pitch > 90 && !IsLocallyControlled())
+	{
+		// map pitch from [270, 360) to [-90, 0)
+		AO_Pitch = FMath::GetMappedRangeValueClamped(FVector2D{270, 360}, FVector2D{-90, 0}, AO_Pitch);
 	}
 }
 

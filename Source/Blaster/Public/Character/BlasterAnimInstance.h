@@ -52,4 +52,13 @@ private:
 	float Lean;
 	FRotator CharacterRotationLastFrame;
 	FRotator CharacterRotation;
+
+	/**
+	 * Aim Offsets
+	 */
+
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float AO_Yaw;
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float AO_Pitch;
 };
