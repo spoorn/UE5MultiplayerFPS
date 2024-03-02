@@ -57,7 +57,7 @@ void UCombatComponent::EquipWeapon(AWeapon* Weapon)
 	if (!Character || !Weapon) return;
 	EquippedWeapon = Weapon;
 	EquippedWeapon->SetWeaponState(EWeaponState::Equipped);
-	if (const USkeletalMeshSocket* HandSocket = Character->GetMesh()->GetSocketByName(RightHandleSocketName))
+	if (const USkeletalMeshSocket* HandSocket = Character->GetMesh()->GetSocketByName(RightHandSocketName))
 	{
 		HandSocket->AttachActor(EquippedWeapon, Character->GetMesh());
 	}

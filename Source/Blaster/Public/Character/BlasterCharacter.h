@@ -32,8 +32,9 @@ public:
 
 	// Should only be called on server
 	void SetOverlappingWeapon(AWeapon* Weapon);
-
+	
 	FORCEINLINE bool IsWeaponEquipped() { return CombatComponent && CombatComponent->EquippedWeapon; }
+	FORCEINLINE AWeapon* GetEquippedWeapon() { return CombatComponent ? CombatComponent->EquippedWeapon : nullptr; }
 	FORCEINLINE bool IsAiming() { return CombatComponent && CombatComponent->bAiming; }
 	FORCEINLINE float GetAOYaw() { return AO_Yaw; }
 	FORCEINLINE float GetAOPitch() { return AO_Pitch; }
