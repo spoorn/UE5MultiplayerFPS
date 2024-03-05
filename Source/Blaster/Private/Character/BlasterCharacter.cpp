@@ -78,6 +78,10 @@ ABlasterCharacter::ABlasterCharacter()
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Equip", EquipAction);
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Crouch", CrouchAction);
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Aim", AimAction);
+
+	// Net
+	MinNetUpdateFrequency = 33;
+	NetUpdateFrequency = 66;
 }
 
 void ABlasterCharacter::Tick(float DeltaTime)
