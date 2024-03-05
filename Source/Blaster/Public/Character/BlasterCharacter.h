@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CharacterTypes.h"
 #include "BlasterComponents/CombatComponent.h"
 #include "GameFramework/Character.h"
 #include "BlasterCharacter.generated.h"
 
+enum class ETurningInPlace : uint8;
 class UCombatComponent;
 class AWeapon;
 class UWidgetComponent;
@@ -38,6 +40,7 @@ public:
 	FORCEINLINE bool IsAiming() { return CombatComponent && CombatComponent->bAiming; }
 	FORCEINLINE float GetAOYaw() { return AO_Yaw; }
 	FORCEINLINE float GetAOPitch() { return AO_Pitch; }
+	FORCEINLINE ETurningInPlace GetTurningInPlace() { return TurningInPlace; }
 
 protected:
 	/**
@@ -109,4 +112,10 @@ private:
 	float AO_Yaw;
 	float AO_Pitch;
 	FRotator StartingAimRotation;
+
+	/**
+	 * Animations for turning
+	 */
+	ETurningInPlace TurningInPlace{ETurningInPlace::NotTurning};
+	void TurnInPlace(float DeltaTime);
 };

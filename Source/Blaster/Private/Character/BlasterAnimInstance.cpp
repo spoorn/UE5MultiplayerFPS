@@ -32,6 +32,8 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	EquippedWeapon = BlasterCharacter->GetEquippedWeapon();
 	bIsCrouched = BlasterCharacter->bIsCrouched;
 	bAiming = BlasterCharacter->IsAiming();
+	TurningInPlace = BlasterCharacter->GetTurningInPlace();
+	
 	// Global rotation of camera aim
 	const FRotator AimRotation = BlasterCharacter->GetBaseAimRotation();
 	// Global rotation of movement

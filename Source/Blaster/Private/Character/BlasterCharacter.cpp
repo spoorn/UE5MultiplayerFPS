@@ -9,6 +9,7 @@
 #include "Asset/AssetMacros.h"
 #include "BlasterComponents/CombatComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Character/CharacterTypes.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -216,16 +217,17 @@ void ABlasterCharacter::AimButtonPressed(const FInputActionValue& Value)
 		// Pressed = false, Released = true
 		bool bPressed = Value.Get<bool>();
 		CombatComponent->SetAiming(bPressed);
-		if (bPressed)
-		{
-			StartingAimRotation = FRotator(0, GetBaseAimRotation().Yaw, 0);
-		}
 	}
 }
 
 void ABlasterCharacter::AimOffset(float DeltaTime)
 {
-	if (!CombatComponent || !CombatComponent->EquippedWeapon) return;
+	if (!CombatComponent || !CombatComponent->EquippedWeapon)
+	{
+		// TODO: optimize
+		StartingAimRotation = FRotator(0, GetBaseAimRotation().Yaw, 0);
+		return;
+	};
 	float Speed = GetVelocity().Size2D();
 	bool bIsInAir = GetCharacterMovement()->IsFalling();
 
@@ -239,6 +241,7 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 		FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
 		AO_Yaw = DeltaAimRotation.Yaw;
 		bUseControllerRotationYaw = false;
+		TurnInPlace(DeltaTime);
 	}
 	if (Speed > 0 || bIsInAir)
 	{
@@ -246,6 +249,7 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 		StartingAimRotation = FRotator(0, GetBaseAimRotation().Yaw, 0);
 		AO_Yaw = 0;
 		bUseControllerRotationYaw = true;
+		TurningInPlace = ETurningInPlace::NotTurning;
 	}
 
 	// Aim offset pitch can change even when jumping
@@ -254,6 +258,20 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 	{
 		// map pitch from [270, 360) to [-90, 0)
 		AO_Pitch = FMath::GetMappedRangeValueClamped(FVector2D{270, 360}, FVector2D{-90, 0}, AO_Pitch);
+	}
+}
+
+void ABlasterCharacter::TurnInPlace(float DeltaTime)
+{
+	if (AO_Yaw > 90)
+	{
+		TurningInPlace = ETurningInPlace::Right;
+	} else if (AO_Yaw < -90)
+	{
+		TurningInPlace = ETurningInPlace::Left;
+	} else
+	{
+		TurningInPlace = ETurningInPlace::NotTurning;
 	}
 }
 
