@@ -31,6 +31,7 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	/// Immediately perform logic after components are initialized
 	virtual void PostInitializeComponents() override;
+	virtual void Jump() override;
 
 	// Should only be called on server
 	void SetOverlappingWeapon(AWeapon* Weapon);

@@ -47,7 +47,7 @@ ABlasterCharacter::ABlasterCharacter()
 
 	// Orient character to movement rotation
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->RotationRate = FRotator(0, 400, 0);
+	GetCharacterMovement()->RotationRate = FRotator(0, 800, 0);
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	GetCharacterMovement()->SetCrouchedHalfHeight(60);
 	GetCharacterMovement()->MaxWalkSpeedCrouched = 350;
@@ -117,6 +117,17 @@ void ABlasterCharacter::PostInitializeComponents()
 	if (CombatComponent)
 	{
 		CombatComponent->Character = this;
+	}
+}
+
+void ABlasterCharacter::Jump()
+{
+	if (bIsCrouched)
+	{
+		UnCrouch();
+	} else
+	{
+		Super::Jump();
 	}
 }
 
