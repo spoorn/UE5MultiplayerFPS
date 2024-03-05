@@ -240,7 +240,11 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 		FRotator CurrentAimRotation = FRotator(0, GetBaseAimRotation().Yaw, 0);
 		FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
 		AO_Yaw = DeltaAimRotation.Yaw;
-		bUseControllerRotationYaw = false;
+		if (TurningInPlace == ETurningInPlace::NotTurning)
+		{
+			InterpAO_Yaw = AO_Yaw;
+		}
+		bUseControllerRotationYaw = true;
 		TurnInPlace(DeltaTime);
 	}
 	if (Speed > 0 || bIsInAir)
@@ -269,9 +273,18 @@ void ABlasterCharacter::TurnInPlace(float DeltaTime)
 	} else if (AO_Yaw < -90)
 	{
 		TurningInPlace = ETurningInPlace::Left;
-	} else
+	}
+	
+	if (TurningInPlace != ETurningInPlace::NotTurning)
 	{
-		TurningInPlace = ETurningInPlace::NotTurning;
+		// Interp towards 0 rotation. Root bone will rotate interpolated towards AO_Yaw
+		InterpAO_Yaw = FMath::FInterpTo(InterpAO_Yaw, 0, DeltaTime, 6);
+		AO_Yaw = InterpAO_Yaw;
+		if (FMath::Abs(AO_Yaw) < 5)
+		{
+			TurningInPlace = ETurningInPlace::NotTurning;
+			StartingAimRotation = FRotator(0, GetBaseAimRotation().Yaw, 0);
+		}
 	}
 }
 
