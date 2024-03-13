@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "CombatComponent.generated.h"
 
+#define TRACE_LENGTH 80000
+
 
 class AWeapon;
 
@@ -32,6 +34,8 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+
+	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
 
 private:
 	/// Character base walk speed, overridden by this combat component

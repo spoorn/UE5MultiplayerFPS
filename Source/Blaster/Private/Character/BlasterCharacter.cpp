@@ -31,10 +31,12 @@ ABlasterCharacter::ABlasterCharacter()
 	// Camera
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComponent->SetupAttachment(GetMesh());
-	SpringArmComponent->TargetArmLength = 600;
+	SpringArmComponent->TargetArmLength = 350;
 	SpringArmComponent->SetRelativeRotation(FRotator(-30, 90, 0));
 	// Bring back up to Z=0
 	SpringArmComponent->SetRelativeLocation(FVector(0, 0, 88));
+	// Socket offset center point to right of character
+	SpringArmComponent->SocketOffset = FVector(0, 75, 0);
 	SpringArmComponent->bUsePawnControlRotation = true;
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
