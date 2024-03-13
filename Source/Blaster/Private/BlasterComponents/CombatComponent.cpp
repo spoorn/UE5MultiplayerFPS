@@ -27,17 +27,6 @@ void UCombatComponent::BeginPlay()
 	}
 }
 
-void UCombatComponent::OnRep_EquippedWeapon()
-{
-	// TODO: Check if this is called multiple times when underlying property of AWeapon that is NOT replicated is changed
-	UE_LOG(LogTemp, Warning, TEXT("OnRep_EquippedWeapon"));
-	if (Character && EquippedWeapon)
-	{
-		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
-		Character->bUseControllerRotationYaw = true;
-	}
-}
-
 
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -67,22 +56,22 @@ void UCombatComponent::EquipWeapon(AWeapon* Weapon)
     Character->bUseControllerRotationYaw = true;
 }
 
+void UCombatComponent::OnRep_EquippedWeapon()
+{
+	// TODO: Check if this is called multiple times when underlying property of AWeapon that is NOT replicated is changed
+	UE_LOG(LogTemp, Warning, TEXT("OnRep_EquippedWeapon"));
+	if (Character && EquippedWeapon)
+	{
+		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+		Character->bUseControllerRotationYaw = true;
+	}
+}
+
 void UCombatComponent::SetAiming(bool bIsAiming)
 {
 	ServerSetAiming_Implementation(bIsAiming);  // Set on client immediately
 	// Don't need to check authority as RPC is ran on server only, which is fine as any changes we make are replicated
 	ServerSetAiming(bIsAiming);
-}
-
-void UCombatComponent::FireButtonPressed(bool bPressed)
-{
-	bFireButtonPressed = bPressed;
-	if (!EquippedWeapon) return;
-	if (Character && bFireButtonPressed)
-	{
-		Character->PlayFireMontage(bAiming);
-		EquippedWeapon->Fire();
-	}
 }
 
 void UCombatComponent::ServerSetAiming_Implementation(bool bIsAiming)
@@ -94,3 +83,26 @@ void UCombatComponent::ServerSetAiming_Implementation(bool bIsAiming)
 	}
 }
 
+void UCombatComponent::FireButtonPressed(bool bPressed)
+{
+	bFireButtonPressed = bPressed;
+	if (bFireButtonPressed)
+	{
+		ServerFire();
+	}
+}
+
+void UCombatComponent::ServerFire_Implementation()
+{
+	MulticastFire();
+}
+
+void UCombatComponent::MulticastFire_Implementation()
+{
+	if (!EquippedWeapon) return;
+	if (Character)
+	{
+		Character->PlayFireMontage(bAiming);
+		EquippedWeapon->Fire();
+	}
+}

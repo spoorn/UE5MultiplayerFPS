@@ -55,5 +55,10 @@ private:
 	UFUNCTION(Server, Reliable)
 	void ServerSetAiming(bool bIsAiming);
 
+	/// Fire weapon, client -> server -> multicast
 	bool bFireButtonPressed;
+	UFUNCTION(Server, Reliable)
+	void ServerFire();
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastFire();
 };
