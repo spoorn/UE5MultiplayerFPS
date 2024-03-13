@@ -33,8 +33,11 @@ public:
 	virtual void PostInitializeComponents() override;
 	virtual void Jump() override;
 
-	// Should only be called on server
+	/// Should only be called on server
 	void SetOverlappingWeapon(AWeapon* Weapon);
+
+	/// Play fire weapon animation montage
+	void PlayFireMontage(bool bAiming);
 	
 	FORCEINLINE bool IsWeaponEquipped() { return CombatComponent && CombatComponent->EquippedWeapon; }
 	FORCEINLINE AWeapon* GetEquippedWeapon() { return CombatComponent ? CombatComponent->EquippedWeapon : nullptr; }
@@ -62,6 +65,8 @@ protected:
 	TObjectPtr<UInputAction> CrouchAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> AimAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	TObjectPtr<UInputAction> FireAction;
 
 	virtual void BeginPlay() override;
 	
@@ -70,6 +75,8 @@ protected:
 	void EquipButtonPressed();
 	void CrouchButtonPressed();
 	void AimButtonPressed(const FInputActionValue& Value);
+	/// True for Hold, False for Released
+	void FireButtonPressed(const FInputActionValue& Value);
 
 	/// Calculate aim offset parameters
 	void AimOffset(float DeltaTime);
@@ -120,4 +127,10 @@ private:
 	 */
 	ETurningInPlace TurningInPlace{ETurningInPlace::NotTurning};
 	void TurnInPlace(float DeltaTime);
+
+	/**
+	 * Animation Montages
+	 */
+	UPROPERTY(EditAnywhere, Category = Combat)
+	TObjectPtr<UAnimMontage> FireWeaponMontage;
 };

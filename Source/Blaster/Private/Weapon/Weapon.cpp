@@ -71,6 +71,14 @@ void AWeapon::ShowPickupWidget(bool bShowWidget)
 	}
 }
 
+void AWeapon::Fire()
+{
+	if (FireAnimation)
+	{
+		GetWeaponMesh()->PlayAnimation(FireAnimation, false);
+	}
+}
+
 void AWeapon::SetWeaponState(EWeaponState State)
 {
 	WeaponState = State;

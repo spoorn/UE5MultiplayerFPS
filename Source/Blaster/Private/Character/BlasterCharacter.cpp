@@ -78,6 +78,10 @@ ABlasterCharacter::ABlasterCharacter()
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Equip", EquipAction);
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Crouch", CrouchAction);
 	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Aim", AimAction);
+	LOAD_ASSET_TO_VARIABLE(UInputAction, "/Game/Input/Actions/IA_Fire", FireAction);
+
+	// Animation montages
+	LOAD_ASSET_TO_VARIABLE(UAnimMontage, "/Game/Blueprints/Character/Animations/AM_FireWeapon", FireWeaponMontage);
 
 	// Net
 	MinNetUpdateFrequency = 33;
@@ -102,6 +106,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &ThisClass::EquipButtonPressed);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &ThisClass::CrouchButtonPressed);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ThisClass::AimButtonPressed);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ThisClass::FireButtonPressed);
 	}
 }
 
@@ -145,6 +150,17 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 		}
 	}
 	OverlappingWeapon = Weapon;
+}
+
+void ABlasterCharacter::PlayFireMontage(bool bAiming)
+{
+	if (!CombatComponent || !CombatComponent->EquippedWeapon || !FireWeaponMontage) return;
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		AnimInstance->Montage_Play(FireWeaponMontage);
+		FName SectionName = bAiming ? FName("RifleAim") : FName("RifleHip");
+		AnimInstance->Montage_JumpToSection(SectionName);
+	}
 }
 
 void ABlasterCharacter::BeginPlay()
@@ -230,8 +246,16 @@ void ABlasterCharacter::AimButtonPressed(const FInputActionValue& Value)
 	if (CombatComponent)
 	{
 		// Pressed = false, Released = true
-		bool bPressed = Value.Get<bool>();
-		CombatComponent->SetAiming(bPressed);
+		CombatComponent->SetAiming(Value.Get<bool>());
+	}
+}
+
+void ABlasterCharacter::FireButtonPressed(const FInputActionValue& Value)
+{
+	if (CombatComponent)
+	{
+		// Pressed = false, Released = true
+		CombatComponent->FireButtonPressed(Value.Get<bool>());
 	}
 }
 

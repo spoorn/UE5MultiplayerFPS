@@ -27,6 +27,8 @@ public:
 
 	/// Set character to aiming stance
 	void SetAiming(bool bIsAiming);
+
+	void FireButtonPressed(bool bPressed);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -52,4 +54,6 @@ private:
 	bool bAiming;
 	UFUNCTION(Server, Reliable)
 	void ServerSetAiming(bool bIsAiming);
+
+	bool bFireButtonPressed;
 };
